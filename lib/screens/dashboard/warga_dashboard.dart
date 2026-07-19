@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../core/supabase_service.dart';
 import '../household/household_management_screen.dart';
+import '../finance/iuran_list_screen.dart';
+import '../finance/kas_rt_screen.dart';
 
 class WargaDashboard extends StatefulWidget {
   final String nama;
@@ -360,7 +362,21 @@ class _WargaDashboardState extends State<WargaDashboard> {
           icon: Icons.receipt_long_outlined,
           label: 'Bayar Iuran',
           color: const Color(0xFF34D399),
-          onTap: () {},
+          onTap: () {
+            final householdId = _profile?['household_id'] as String?;
+            if (householdId != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => IuranListScreen(householdId: householdId),
+                ),
+              ).then((_) => _loadWargaData());
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Rumah tangga Anda belum terdaftar.')),
+              );
+            }
+          },
         ),
         _buildActionCard(
           icon: Icons.assignment_ind_outlined,
@@ -378,7 +394,17 @@ class _WargaDashboardState extends State<WargaDashboard> {
           icon: Icons.account_balance_wallet_outlined,
           label: 'Kas RT',
           color: const Color(0xFFA78BFA),
-          onTap: () {},
+          onTap: () {
+            final rtId = _profile?['rt_id'] as String?;
+            if (rtId != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => KasRTScreen(rtId: rtId, userRole: 'warga'),
+                ),
+              ).then((_) => _loadWargaData());
+            }
+          },
         ),
         _buildActionCard(
           icon: Icons.help_outline_rounded,

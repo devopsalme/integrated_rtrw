@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/supabase_service.dart';
+import '../announcement/create_announcement_screen.dart';
+import '../finance/iuran_manage_screen.dart';
+import '../finance/kas_rt_screen.dart';
 
 class AdminRTDashboard extends StatefulWidget {
   final String nama;
@@ -14,6 +17,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
   final _supabaseService = SupabaseService();
   bool _isLoading = true;
   String _nomorRT = '';
+  String? _rtId;
   int _totalWarga = 0;
   int _totalKK = 0;
   int _pendingTamu = 0;
@@ -65,6 +69,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
       if (mounted) {
         setState(() {
           _nomorRT = nr;
+          _rtId = rtId;
           _wargaList = List<Map<String, dynamic>>.from(wargaRes);
           _totalWarga = wargaRes.length;
           _totalKK = kkCount.length;
@@ -207,6 +212,58 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 28),
+
+                    // Menu Kelola RT
+                    Text(
+                      'Menu Kelola RT',
+                      style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildMenuRow(
+                      icon: Icons.campaign_rounded,
+                      title: 'Buat Pengumuman RT',
+                      subtitle: 'Siarkan kabar penting ke warga RT $_nomorRT',
+                      color: const Color(0xFF38BDF8),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CreateAnnouncementScreen()),
+                        ).then((_) => _loadRTData());
+                      },
+                    ),
+                    _buildMenuRow(
+                      icon: Icons.payment_rounded,
+                      title: 'Kelola Iuran Warga',
+                      subtitle: 'Terbitkan tagihan & verifikasi bukti bayar',
+                      color: const Color(0xFF34D399),
+                      onTap: () {
+                        if (_rtId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IuranManageScreen(rtId: _rtId!),
+                            ),
+                          ).then((_) => _loadRTData());
+                        }
+                      },
+                    ),
+                    _buildMenuRow(
+                      icon: Icons.account_balance_wallet_outlined,
+                      title: 'Kas RT Terbuka',
+                      subtitle: 'Laporan kas transparan & catat transaksi',
+                      color: const Color(0xFFA78BFA),
+                      onTap: () {
+                        if (_rtId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => KasRTScreen(rtId: _rtId!, userRole: 'admin_rt'),
+                            ),
+                          ).then((_) => _loadRTData());
+                        }
+                      },
                     ),
                     const SizedBox(height: 28),
 
@@ -380,6 +437,56 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
             style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400]),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMenuRow({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Colors.blueGrey[400]),
+          ],
+        ),
       ),
     );
   }

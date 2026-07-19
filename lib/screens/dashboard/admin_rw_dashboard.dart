@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/supabase_service.dart';
+import '../announcement/create_announcement_screen.dart';
 
 class AdminRWDashboard extends StatefulWidget {
   final String nama;
@@ -187,12 +188,21 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
                       title: 'Buat Pengumuman RW',
                       subtitle: 'Broadcast ke seluruh RT / Agama tertentu',
                       color: const Color(0xFF38BDF8),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateAnnouncementScreen(),
+                          ),
+                        ).then((_) => _loadStats());
+                      },
                     ),
                     _buildMenuRow(
                       icon: Icons.settings_accessibility_rounded,
                       title: 'Kelola Data Ketua RT',
                       subtitle: 'Atur nomor kontak & akun admin RT',
                       color: const Color(0xFF34D399),
+                      onTap: () {},
                     ),
                   ],
                 ),
@@ -257,6 +267,7 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
     required String title,
     required String subtitle,
     required Color color,
+    required VoidCallback onTap,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -266,34 +277,37 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
-                ),
-              ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(Icons.chevron_right_rounded, color: Colors.blueGrey[500]),
-        ],
+            Icon(Icons.chevron_right_rounded, color: Colors.blueGrey[500]),
+          ],
+        ),
       ),
     );
   }
