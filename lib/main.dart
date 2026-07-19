@@ -1,121 +1,352 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // NOTE: Ganti URL dan Anon Key dengan konfigurasi proyek Supabase Anda.
+  await Supabase.initialize(
+    url: 'https://your-project-id.supabase.co',
+    anonKey: 'your-anon-key',
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Sistem Informasi Terpadu RW & RT',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF0F172A), // Slate 900
+          primary: const Color(0xFF0F172A),
+          secondary: const Color(0xFF0284C7), // Sky 600
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+        textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const AuthGate(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+/// Gerbang Autentikasi untuk memeriksa session aktif Supabase
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<AuthGate> createState() => _AuthGateState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AuthGateState extends State<AuthGate> {
+  final _supabase = Supabase.instance.client;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AuthState>(
+      stream: _supabase.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        final session = snapshot.data?.session;
+        if (session != null) {
+          return const DashboardGate();
+        }
+
+        return const LoginScreen();
+      }
+    );
+  }
+}
+
+/// Gerbang Dashboard untuk memeriksa role pengguna dan mengarahkan ke dashboard yang sesuai
+class DashboardGate extends StatefulWidget {
+  const DashboardGate({super.key});
+
+  @override
+  State<DashboardGate> createState() => _DashboardGateState();
+}
+
+class _DashboardGateState extends State<DashboardGate> {
+  final _supabase = Supabase.instance.client;
+  bool _isLoading = true;
+  String? _role;
+  String? _nama;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) return;
+
+      final data = await _supabase
+          .from('profiles')
+          .select('nama_lengkap, role')
+          .eq('id', user.id)
+          .single();
+
+      if (mounted) {
+        setState(() {
+          _role = data['role'] as String?;
+          _nama = data['nama_lengkap'] as String?;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  'Gagal memuat profil pengguna:',
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                ),
+                Text(_errorMessage!, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                      _errorMessage = null;
+                    });
+                    _fetchUserProfile();
+                  },
+                  child: const Text('Coba Lagi'),
+                ),
+                TextButton(
+                  onPressed: () => _supabase.auth.signOut(),
+                  child: const Text('Log Out'),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+      );
+    }
+
+    // Arahkan dashboard berdasarkan role
+    switch (_role) {
+      case 'admin_rw':
+        return AdminRWDashboard(nama: _nama ?? 'Admin RW');
+      case 'admin_rt':
+        return AdminRTDashboard(nama: _nama ?? 'Admin RT');
+      case 'warga':
+      default:
+        return WargaDashboard(nama: _nama ?? 'Warga');
+    }
+  }
+}
+
+// =========================================================================
+// SCREEN PLACEHOLDERS (Login & Dashboards)
+// =========================================================================
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _supabase = Supabase.instance.client;
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
+    try {
+      await _supabase.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Gagal: ${e.toString()}'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.maps_home_work_rounded, size: 80, color: Color(0xFF0F172A)),
+              const SizedBox(height: 24),
+              Text(
+                'Sistem Terpadu RT/RW',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF0F172A),
+                ),
+              ),
+              Text(
+                'Silakan login untuk mengakses layanan warga',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 36),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+                obscureText: true,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F172A),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    );
+  }
+}
+
+class AdminRWDashboard extends StatelessWidget {
+  final String nama;
+  const AdminRWDashboard({super.key, required this.nama});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard Admin RW'),
+        actions: [
+          IconButton(
+            onPressed: () => Supabase.instance.client.auth.signOut(),
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      body: Center(
+        child: Text('Selamat Datang, $nama!\nAnda memiliki hak akses Admin RW (Super Admin).'),
+      ),
+    );
+  }
+}
+
+class AdminRTDashboard extends StatelessWidget {
+  final String nama;
+  const AdminRTDashboard({super.key, required this.nama});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard Admin RT'),
+        actions: [
+          IconButton(
+            onPressed: () => Supabase.instance.client.auth.signOut(),
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      body: Center(
+        child: Text('Selamat Datang, $nama!\nAnda memiliki hak akses Admin RT.'),
+      ),
+    );
+  }
+}
+
+class WargaDashboard extends StatelessWidget {
+  final String nama;
+  const WargaDashboard({super.key, required this.nama});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard Warga'),
+        actions: [
+          IconButton(
+            onPressed: () => Supabase.instance.client.auth.signOut(),
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      body: Center(
+        child: Text('Selamat Datang, $nama!\nAnda login sebagai Warga.'),
       ),
     );
   }

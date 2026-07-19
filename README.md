@@ -1,17 +1,28 @@
-# integrated_rtrw
+# Sistem Informasi Terpadu RW & RT (Integrated RTRW)
 
-A new Flutter project.
+Proyek ini adalah aplikasi mobile berbasis **Flutter** (Android Native & iOS PWA) dengan backend **Supabase** (PostgreSQL, Auth, Storage, Edge Functions). Aplikasi ini dirancang menggunakan arsitektur *multi-tenant* (1 RW mengelola beberapa RT) dengan pemisahan data yang ketat menggunakan **Row Level Security (RLS)**.
 
-## Getting Started
+## Tech Stack
+- **Frontend**: Flutter
+- **Backend & Database**: Supabase (Postgres, Auth, Storage, Edge Functions)
+- **Deployment**: Android Native & iOS PWA
 
-This project is a starting point for a Flutter application.
+## Struktur Repositori & Branching
+- `main`: Branch stabil untuk rilis produksi.
+- `dev`: Branch utama untuk integrasi fitur baru dan testing.
+- `feature/*`: Branch fitur spesifik (di-merge ke `dev` via Pull Request).
 
-A few resources to get you started if this is your first Flutter project:
+## Skema Database & RLS
+Seluruh skema database PostgreSQL dan aturan keamanan (Row Level Security) disimpan di folder `/supabase` atau dapat ditemukan di repositori ini untuk kemudahan replikasi.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Cara Mulai (Local Development)
+1. Pastikan Flutter SDK telah terinstal di perangkat Anda.
+2. Clone repository:
+   ```bash
+   git clone https://github.com/devopsalme/integrated_rtrw.git
+   ```
+3. Pindah ke branch `dev`:
+   ```bash
+   git checkout dev
+   ```
+4. Jalankan perintah `flutter pub get` untuk mengunduh dependency.
