@@ -92,7 +92,6 @@ class SupabaseService {
     );
   }
 
-  /// Mengambil profil user yang sedang login
   Future<Map<String, dynamic>?> getCurrentProfile() async {
     final user = currentUser;
     if (user == null) return null;
@@ -105,6 +104,7 @@ class SupabaseService {
           .single();
       return response;
     } catch (e) {
+      print('DEBUG GET PROFILE ERROR: $e');
       return null;
     }
   }
