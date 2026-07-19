@@ -104,14 +104,14 @@ class _KasRTScreenState extends State<KasRTScreen> {
                     const SizedBox(height: 20),
 
                     // Tipe Aliran
-                    Text('Tipe Aliran Dana', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Tipe Aliran Dana', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     Row(
                       children: [
                         ChoiceChip(
                           label: Text('Kas Masuk', style: GoogleFonts.outfit()),
                           selected: selectedTipe == 'masuk',
-                          selectedColor: Colors.emerald,
+                          selectedColor: const Color(0xFF10B981),
                           onSelected: (val) => setModalState(() => selectedTipe = 'masuk'),
                         ),
                         const SizedBox(width: 12),
@@ -126,7 +126,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                     const SizedBox(height: 16),
 
                     // Nominal
-                    Text('Nominal (Rupiah)', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Nominal (Rupiah)', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     TextFormField(
                       controller: amountController,
@@ -142,7 +142,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                     const SizedBox(height: 16),
 
                     // Keterangan
-                    Text('Keterangan / Deskripsi', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Keterangan / Deskripsi', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     TextFormField(
                       controller: descController,
@@ -170,10 +170,10 @@ class _KasRTScreenState extends State<KasRTScreen> {
                             keterangan: descController.text.trim(),
                           );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
+                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Transaksi berhasil dicatat!', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-                              backgroundColor: Colors.emerald,
+                              backgroundColor: const Color(0xFF10B981),
                             ),
                           );
                           _loadKasData();
@@ -204,7 +204,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
   InputDecoration _buildInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.slate[500]),
+      hintStyle: const TextStyle(color: Color(0xFF64748B)),
       prefixIcon: Icon(icon, color: const Color(0xFF38BDF8)),
       filled: true,
       fillColor: Colors.white.withOpacity(0.05),
@@ -268,7 +268,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.between,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Riwayat Aliran Kas RT',
@@ -276,7 +276,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                           ),
                           Text(
                             '${_kasList.length} transaksi',
-                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                            style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8)),
                           ),
                         ],
                       ),
@@ -288,7 +288,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                         ? const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 48.0),
-                              child: Text('Belum ada riwayat transaksi kas.', style: TextStyle(color: Colors.slate)),
+                              child: Text('Belum ada riwayat transaksi kas.', style: TextStyle(color: Color(0xFF64748B))),
                             ),
                           )
                         : ListView.builder(
@@ -317,11 +317,11 @@ class _KasRTScreenState extends State<KasRTScreen> {
                                     CircleAvatar(
                                       radius: 20,
                                       backgroundColor: isMasuk
-                                          ? Colors.emerald.withOpacity(0.1)
+                                          ? const Color(0xFF10B981).withOpacity(0.1)
                                           : Colors.redAccent.withOpacity(0.1),
                                       child: Icon(
                                         isMasuk ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
-                                        color: isMasuk ? Colors.emerald : Colors.redAccent,
+                                        color: isMasuk ? const Color(0xFF10B981) : Colors.redAccent,
                                       ),
                                     ),
                                     const SizedBox(width: 16),
@@ -340,7 +340,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                                           const SizedBox(height: 4),
                                           Text(
                                             'Oleh: $creator • $dateStr',
-                                            style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                                            style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8)),
                                           ),
                                         ],
                                       ),
@@ -350,7 +350,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                                       style: GoogleFonts.outfit(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
-                                        color: isMasuk ? Colors.emerald : Colors.redAccent,
+                                        color: isMasuk ? const Color(0xFF10B981) : Colors.redAccent,
                                       ),
                                     ),
                                   ],
@@ -386,7 +386,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
             'TOTAL SALDO KAS RT',
             style: GoogleFonts.outfit(
               fontSize: 12,
-              color: Colors.slate[400],
+              color: const Color(0xFF94A3B8),
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
             ),
@@ -409,9 +409,9 @@ class _KasRTScreenState extends State<KasRTScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.arrow_circle_down_rounded, color: Colors.emerald, size: 16),
+                        const Icon(Icons.arrow_circle_down_rounded, color: Color(0xFF10B981), size: 16),
                         const SizedBox(width: 4),
-                        Text('Total Pemasukan', style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400])),
+                        Text('Total Pemasukan', style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8))),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -431,7 +431,7 @@ class _KasRTScreenState extends State<KasRTScreen> {
                       children: [
                         const Icon(Icons.arrow_circle_up_rounded, color: Colors.redAccent, size: 16),
                         const SizedBox(width: 4),
-                        Text('Total Pengeluaran', style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400])),
+                        Text('Total Pengeluaran', style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8))),
                       ],
                     ),
                     const SizedBox(height: 4),

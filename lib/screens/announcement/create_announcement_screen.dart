@@ -104,7 +104,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Pengumuman berhasil diposting!', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-            backgroundColor: Colors.emerald,
+            backgroundColor: const Color(0xFF10B981),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -181,7 +181,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'Pilih agama tertentu jika info sensitif ibadah/kegiatan keagamaan agar tidak memicu fatigue notifikasi bagi pemeluk agama lain.',
-                      style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                      style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8)),
                     ),
                     const SizedBox(height: 36),
 
@@ -213,7 +213,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         text,
-        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.slate[300]),
+        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFCBD5E1)),
       ),
     );
   }
@@ -221,7 +221,7 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
   InputDecoration _buildInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.slate[500]),
+      hintStyle: const TextStyle(color: Color(0xFF64748B)),
       prefixIcon: Icon(icon, color: const Color(0xFF38BDF8)),
       filled: true,
       fillColor: Colors.white.withOpacity(0.05),
@@ -250,11 +250,11 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.lock_outline_rounded, color: Colors.slate, size: 20),
+          const Icon(Icons.lock_outline_rounded, color: Color(0xFF64748B), size: 20),
           const SizedBox(width: 12),
           Text(
             'Target Terkunci: RT Anda sendiri',
-            style: GoogleFonts.outfit(color: Colors.slate[300], fontSize: 14),
+            style: GoogleFonts.outfit(color: const Color(0xFFCBD5E1), fontSize: 14),
           ),
         ],
       ),

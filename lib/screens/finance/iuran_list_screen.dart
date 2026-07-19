@@ -83,7 +83,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Bukti transfer berhasil diunggah! Menunggu konfirmasi Admin RT.', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-            backgroundColor: Colors.emerald,
+            backgroundColor: const Color(0xFF10B981),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -144,7 +144,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.receipt_long_outlined, size: 72, color: Colors.slate),
+              const Icon(Icons.receipt_long_outlined, size: 72, color: Color(0xFF64748B)),
               const SizedBox(height: 16),
               Text(
                 'Tidak Ada Tagihan',
@@ -154,7 +154,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
               Text(
                 'Keluarga Anda tidak memiliki daftar iuran aktif saat ini.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(color: Colors.slate[400]),
+                style: GoogleFonts.outfit(color: const Color(0xFF94A3B8)),
               ),
             ],
           ),
@@ -180,7 +180,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
         color: const Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isLunas ? Colors.emerald.withOpacity(0.2) : Colors.white.withOpacity(0.05),
+          color: isLunas ? const Color(0xFF10B981).withOpacity(0.2) : Colors.white.withOpacity(0.05),
         ),
       ),
       child: Column(
@@ -188,12 +188,12 @@ class _IuranListScreenState extends State<IuranListScreen> {
         children: [
           // Header iuran card
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isLunas ? Colors.emerald.withOpacity(0.15) : Colors.orangeAccent.withOpacity(0.15),
+                  color: isLunas ? const Color(0xFF10B981).withOpacity(0.15) : Colors.orangeAccent.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -201,7 +201,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: isLunas ? Colors.emerald : Colors.orangeAccent,
+                    color: isLunas ? const Color(0xFF10B981) : Colors.orangeAccent,
                   ),
                 ),
               ),
@@ -213,7 +213,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
                 ),
                 child: Text(
                   tipe.toUpperCase(),
-                  style: GoogleFonts.outfit(fontSize: 10, color: Colors.slate[400], fontWeight: FontWeight.bold),
+                  style: GoogleFonts.outfit(fontSize: 10, color: const Color(0xFF94A3B8), fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -228,20 +228,20 @@ class _IuranListScreenState extends State<IuranListScreen> {
           const SizedBox(height: 4),
           Text(
             'Jatuh Tempo: $dateStr',
-            style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+            style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8)),
           ),
           const SizedBox(height: 16),
 
           // Nominal & Upload Action
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Nominal Tagihan',
-                    style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                    style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8)),
                   ),
                   Text(
                     _currencyFormatter.format(nominal),
@@ -267,7 +267,7 @@ class _IuranListScreenState extends State<IuranListScreen> {
                 )
               else
                 IconButton(
-                  icon: const Icon(Icons.check_circle, color: Colors.emerald, size: 28),
+                  icon: const Icon(Icons.check_circle, color: Color(0xFF10B981), size: 28),
                   onPressed: () {
                     // Tampilkan bukti bayar url jika di klik
                     if (iuran['bukti_bayar_url'] != null) {

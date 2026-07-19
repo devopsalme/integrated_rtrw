@@ -79,7 +79,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Pembayaran disetujui! Saldo Kas RT bertambah.', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-            backgroundColor: Colors.emerald,
+            backgroundColor: const Color(0xFF10B981),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -162,7 +162,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                     const SizedBox(height: 20),
 
                     // Pilih Target Rumah Tangga
-                    Text('Target Penerima Iuran', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Target Penerima Iuran', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String?>(
                       value: selectedHouseholdId,
@@ -190,7 +190,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                     const SizedBox(height: 16),
 
                     // Nama Iuran
-                    Text('Nama Iuran', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Nama Iuran', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     TextFormField(
                       controller: nameController,
@@ -201,7 +201,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                     const SizedBox(height: 16),
 
                     // Nominal
-                    Text('Nominal (Rupiah)', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Nominal (Rupiah)', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     TextFormField(
                       controller: amountController,
@@ -217,7 +217,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                     const SizedBox(height: 16),
 
                     // Tipe
-                    Text('Tipe Iuran', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Tipe Iuran', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     Row(
                       children: [
@@ -239,7 +239,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                     const SizedBox(height: 16),
 
                     // Jatuh Tempo
-                    Text('Jatuh Tempo', style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400])),
+                    Text('Jatuh Tempo', style: GoogleFonts.outfit(fontSize: 12, color: const Color(0xFF94A3B8))),
                     const SizedBox(height: 6),
                     OutlinedButton.icon(
                       onPressed: () async {
@@ -303,7 +303,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('Tagihan iuran berhasil diterbitkan!', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-                              backgroundColor: Colors.emerald,
+                              backgroundColor: const Color(0xFF10B981),
                             ),
                           );
                           _loadInitialData();
@@ -334,7 +334,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
   InputDecoration _buildInputDecoration(String hintText, IconData icon) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.slate[500]),
+      hintStyle: const TextStyle(color: Color(0xFF64748B)),
       prefixIcon: Icon(icon, color: const Color(0xFF38BDF8)),
       filled: true,
       fillColor: Colors.white.withOpacity(0.05),
@@ -404,7 +404,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.payment_rounded, size: 72, color: Colors.slate),
+              const Icon(Icons.payment_rounded, size: 72, color: Color(0xFF64748B)),
               const SizedBox(height: 16),
               Text(
                 'Belum Ada Tagihan',
@@ -414,7 +414,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
               Text(
                 'Klik tombol tambah di pojok kanan atas untuk menerbitkan tagihan iuran perdana.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(color: Colors.slate[400]),
+                style: GoogleFonts.outfit(color: const Color(0xFF94A3B8)),
               ),
             ],
           ),
@@ -444,7 +444,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isLunas 
-              ? Colors.emerald.withOpacity(0.2) 
+              ? const Color(0xFF10B981).withOpacity(0.2) 
               : (hasUploadedProof ? Colors.orangeAccent.withOpacity(0.3) : Colors.white.withOpacity(0.05)),
         ),
       ),
@@ -452,14 +452,14 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, College: EdgeInsets.all(2)),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isLunas 
-                      ? Colors.emerald.withOpacity(0.15) 
-                      : (hasUploadedProof ? Colors.orangeAccent.withOpacity(0.15) : Colors.slate.withOpacity(0.15)),
+                      ? const Color(0xFF10B981).withOpacity(0.15) 
+                      : (hasUploadedProof ? Colors.orangeAccent.withOpacity(0.15) : const Color(0xFF64748B).withOpacity(0.15)),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -467,13 +467,13 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                   style: GoogleFonts.outfit(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: isLunas ? Colors.emerald : (hasUploadedProof ? Colors.orangeAccent : Colors.slate),
+                    color: isLunas ? const Color(0xFF10B981) : (hasUploadedProof ? Colors.orangeAccent : const Color(0xFF64748B)),
                   ),
                 ),
               ),
               Text(
                 tipe.toUpperCase(),
-                style: GoogleFonts.outfit(fontSize: 10, color: Colors.slate[400], fontWeight: FontWeight.bold),
+                style: GoogleFonts.outfit(fontSize: 10, color: const Color(0xFF94A3B8), fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -486,11 +486,11 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
           const SizedBox(height: 4),
           Text(
             'Alamat: $alamat',
-            style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[300]),
+            style: GoogleFonts.outfit(fontSize: 13, color: const Color(0xFFCBD5E1)),
           ),
           Text(
             'Jatuh Tempo: $dateStr • Nominal: ${_currencyFormatter.format(nominal)}',
-            style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+            style: GoogleFonts.outfit(fontSize: 11, color: const Color(0xFF94A3B8)),
           ),
           
           if (!isLunas && hasUploadedProof) ...[
@@ -534,7 +534,7 @@ class _IuranManageScreenState extends State<IuranManageScreen> {
                 ElevatedButton.icon(
                   onPressed: () => _handleApprovePayment(iuran),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.emerald,
+                    backgroundColor: const Color(0xFF10B981),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
