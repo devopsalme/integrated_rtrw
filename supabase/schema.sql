@@ -291,6 +291,10 @@ CREATE POLICY "Warga can view profiles in their own RT"
 ON profiles FOR SELECT TO authenticated
 USING ( rt_id = (SELECT user_rt_id FROM get_current_profile()) );
 
+CREATE POLICY "Warga can view their own profile" 
+ON profiles FOR SELECT TO authenticated
+USING ( id = auth.uid() );
+
 CREATE POLICY "Warga can update their own profile" 
 ON profiles FOR UPDATE TO authenticated
 USING ( id = auth.uid() )
