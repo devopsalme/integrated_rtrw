@@ -5,6 +5,8 @@ import '../../core/supabase_service.dart';
 import '../household/household_management_screen.dart';
 import '../finance/iuran_list_screen.dart';
 import '../finance/kas_rt_screen.dart';
+import '../guest/guest_report_screen.dart';
+import '../waste/waste_management_screen.dart';
 
 class WargaDashboard extends StatefulWidget {
   final String nama;
@@ -382,13 +384,33 @@ class _WargaDashboardState extends State<WargaDashboard> {
           icon: Icons.assignment_ind_outlined,
           label: 'Lapor Tamu',
           color: const Color(0xFFFBBF24),
-          onTap: () {},
+          onTap: () {
+            final rtId = _profile?['rt_id'] as String?;
+            if (rtId != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GuestReportScreen(rtId: rtId),
+                ),
+              ).then((_) => _loadWargaData());
+            }
+          },
         ),
         _buildActionCard(
           icon: Icons.delete_sweep_outlined,
           label: 'Jadwal Sampah',
           color: const Color(0xFFF472B6),
-          onTap: () {},
+          onTap: () {
+            final rtId = _profile?['rt_id'] as String?;
+            if (rtId != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WasteManagementScreen(rtId: rtId, userRole: 'warga'),
+                ),
+              ).then((_) => _loadWargaData());
+            }
+          },
         ),
         _buildActionCard(
           icon: Icons.account_balance_wallet_outlined,

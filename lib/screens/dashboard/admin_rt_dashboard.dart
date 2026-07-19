@@ -4,6 +4,9 @@ import '../../core/supabase_service.dart';
 import '../announcement/create_announcement_screen.dart';
 import '../finance/iuran_manage_screen.dart';
 import '../finance/kas_rt_screen.dart';
+import '../guest/guest_manage_screen.dart';
+import '../waste/waste_management_screen.dart';
+import '../security/panic_alert_screen.dart';
 
 class AdminRTDashboard extends StatefulWidget {
   final String nama;
@@ -265,6 +268,54 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                         }
                       },
                     ),
+                    _buildMenuRow(
+                      icon: Icons.assignment_ind_outlined,
+                      title: 'Kelola Laporan Tamu',
+                      subtitle: 'Verifikasi & pantau laporan tamu 24 jam',
+                      color: const Color(0xFFFBBF24),
+                      onTap: () {
+                        if (_rtId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GuestManageScreen(rtId: _rtId!),
+                            ),
+                          ).then((_) => _loadRTData());
+                        }
+                      },
+                    ),
+                    _buildMenuRow(
+                      icon: Icons.delete_sweep_outlined,
+                      title: 'Kelola Layanan Sampah',
+                      subtitle: 'Atur jadwal & penjemputan sampah besar',
+                      color: const Color(0xFFF472B6),
+                      onTap: () {
+                        if (_rtId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WasteManagementScreen(rtId: _rtId!, userRole: 'admin_rt'),
+                            ),
+                          ).then((_) => _loadRTData());
+                        }
+                      },
+                    ),
+                    _buildMenuRow(
+                      icon: Icons.notifications_active_outlined,
+                      title: 'Pusat Darurat RT (SOS)',
+                      subtitle: 'Pantau riwayat warga menekan tombol panic',
+                      color: Colors.redAccent,
+                      onTap: () {
+                        if (_rtId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PanicAlertScreen(rtId: _rtId!, userRole: 'admin_rt'),
+                            ),
+                          ).then((_) => _loadRTData());
+                        }
+                      },
+                    ),
                     const SizedBox(height: 28),
 
                     // List Warga
@@ -394,7 +445,14 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Action panic alerts
+              if (_rtId != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PanicAlertScreen(rtId: _rtId!, userRole: 'admin_rt'),
+                  ),
+                ).then((_) => _loadRTData());
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,

@@ -282,4 +282,156 @@ class SupabaseService {
       'created_by': user.id,
     });
   }
+
+  // =========================================================================
+  // FASE 3: FITUR TOMBOL DARURAT (PANIC BUTTON)
+  // =========================================================================
+
+  /// Memicu tombol darurat panic alert
+  Future<void> triggerPanicAlert(String rtId) async {
+    final user = currentUser;
+    if (user == null) throw Exception('User tidak terautentikasi.');
+
+    await _client.from('panic_alerts').insert({
+      'rt_id': rtId,
+      'profile_id': user.id,
+      'status': 'active',
+    });
+  }
+
+  /// Membatalkan / menyelesaikan status panic alert (Oleh Admin RT)
+  Future<void> resolvePanicAlert(String alertId) async {
+    await _client.from('panic_alerts').update({
+      'status': 'resolved',
+    }).eq('id', alertId);
+  }
+
+  /// Mengambil daftar panic alert aktif di RT ini
+  Future<List<Map<String, dynamic>>> getActivePanicAlerts(String rtId) async {
+    final response = await _client
+        .from('panic_alerts')
+        .select('*, creator:profile_id(nama_lengkap, no_hp)')
+        .eq('rt_id', rtId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  // =========================================================================
+  // FASE 3: FITUR LAPORAN TAMU WAJIB (24 JAM)
+  // =========================================================================
+
+  /// Membuat laporan tamu baru
+  Future<void> reportGuest({
+    required String nama,
+    required String nik,
+    required String hubungan,
+    required String tglDatang,
+    required String tglPulang,
+    required String keterangan,
+    required String rtId,
+  }) async {
+    final user = currentUser;
+    if (user == null) throw Exception('User tidak terautentikasi.');
+
+    await _client.from('tamu_reports').insert({
+      'rt_id': rtId,
+      'reporter_id': user.id,
+      'nama_tamu': nama,
+      'nik_tamu': nik,
+      'hubungan': hubungan,
+      'tanggal_datang': tglDatang,
+      'tanggal_pulang': tglPulang,
+      'keterangan': keterangan,
+      'status': 'pending',
+    });
+  }
+
+  /// Mengambil semua laporan tamu di wilayah RT
+  Future<List<Map<String, dynamic>>> getGuestReports(String rtId) async {
+    final response = await _client
+        .from('tamu_reports')
+        .select('*, reporter:reporter_id(nama_lengkap)')
+        .eq('rt_id', rtId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  /// Menyetujui/menolak laporan tamu (Oleh Admin RT)
+  Future<void> updateGuestReportStatus({
+    required String reportId,
+    required String status,
+  }) async {
+    await _client.from('tamu_reports').update({
+      'status': status,
+    }).eq('id', reportId);
+  }
+
+  // =========================================================================
+  // FASE 3: FITUR PENGELOLAAN SAMPAH
+  // =========================================================================
+
+  /// Mengambil jadwal mobil piket sampah mingguan RT
+  Future<List<Map<String, dynamic>>> getWasteSchedule(String rtId) async {
+    try {
+      final response = await _client
+          .from('sampah_schedule')
+          .select('*')
+          .eq('rt_id', rtId)
+          .order('hari_indeks', ascending: true);
+      
+      final list = List<Map<String, dynamic>>.from(response);
+      if (list.isEmpty) {
+        return _getDummyWasteSchedule();
+      }
+      return list;
+    } catch (_) {
+      return _getDummyWasteSchedule();
+    }
+  }
+
+  List<Map<String, dynamic>> _getDummyWasteSchedule() {
+    return [
+      {'hari': 'Senin & Kamis', 'tipe_sampah': 'Organik (Sisa Makanan, Daun)', 'jam': '08:00 - 10:00'},
+      {'hari': 'Rabu', 'tipe_sampah': 'Anorganik (Plastik, Kertas, Botol)', 'jam': '09:00 - 11:00'},
+      {'hari': 'Sabtu', 'tipe_sampah': 'B3 & Residu (Elektronik, Kaca, Popok)', 'jam': '08:00 - 10:00'},
+    ];
+  }
+
+  /// Membuat permintaan jemput sampah besar (non-rutin) oleh warga
+  Future<void> createWastePickupRequest({
+    required String rtId,
+    required String deskripsi,
+    required String scheduledDate,
+  }) async {
+    final user = currentUser;
+    if (user == null) throw Exception('User tidak terautentikasi.');
+
+    await _client.from('sampah_pickup_requests').insert({
+      'rt_id': rtId,
+      'profile_id': user.id,
+      'deskripsi': deskripsi,
+      'tanggal_jemput': scheduledDate,
+      'status': 'pending',
+    });
+  }
+
+  /// Mengambil semua request penjemputan sampah besar di RT
+  Future<List<Map<String, dynamic>>> getWastePickupRequests(String rtId) async {
+    final response = await _client
+        .from('sampah_pickup_requests')
+        .select('*, creator:profile_id(nama_lengkap, no_hp)')
+        .eq('rt_id', rtId)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  /// Memperbarui status jemput sampah (Oleh Admin RT/Petugas)
+  Future<void> updateWastePickupStatus({
+    required String requestId,
+    required String status,
+  }) async {
+    await _client.from('sampah_pickup_requests').update({
+      'status': status,
+    }).eq('id', requestId);
+  }
 }
