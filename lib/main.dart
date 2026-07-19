@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'core/supabase_service.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/dashboard/admin_rt_dashboard.dart';
+import 'screens/dashboard/admin_rw_dashboard.dart';
+import 'screens/dashboard/warga_dashboard.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // NOTE: Ganti URL dan Anon Key dengan konfigurasi proyek Supabase Anda.
+  // NOTE: Silakan ganti URL dan Anon Key dengan kredensial proyek Supabase Anda.
   await Supabase.initialize(
     url: 'https://your-project-id.supabase.co',
     anonKey: 'your-anon-key',
@@ -27,7 +33,7 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF0F172A), // Slate 900
           primary: const Color(0xFF0F172A),
           secondary: const Color(0xFF0284C7), // Sky 600
-          brightness: Brightness.light,
+          brightness: Brightness.dark, // Set dark mode as default for rich aesthetics
         ),
         useMaterial3: true,
         textTheme: GoogleFonts.outfitTextTheme(Theme.of(context).textTheme),
@@ -56,7 +62,7 @@ class _AuthGateState extends State<AuthGate> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
             ),
           );
         }
@@ -81,7 +87,7 @@ class DashboardGate extends StatefulWidget {
 }
 
 class _DashboardGateState extends State<DashboardGate> {
-  final _supabase = Supabase.instance.client;
+  final _supabaseService = SupabaseService();
   bool _isLoading = true;
   String? _role;
   String? _nama;
@@ -95,26 +101,26 @@ class _DashboardGateState extends State<DashboardGate> {
 
   Future<void> _fetchUserProfile() async {
     try {
-      final user = _supabase.auth.currentUser;
-      if (user == null) return;
-
-      final data = await _supabase
-          .from('profiles')
-          .select('nama_lengkap, role')
-          .eq('id', user.id)
-          .single();
+      final data = await _supabaseService.getCurrentProfile();
 
       if (mounted) {
-        setState(() {
-          _role = data['role'] as String?;
-          _nama = data['nama_lengkap'] as String?;
-          _isLoading = false;
-        });
+        if (data != null) {
+          setState(() {
+            _role = data['role'] as String?;
+            _nama = data['nama_lengkap'] as String?;
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _errorMessage = 'Profil warga tidak ditemukan. Hubungi Admin RT.';
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = e.toString();
+          _errorMessage = 'Gagal memuat profil: ${e.toString()}';
           _isLoading = false;
         });
       }
@@ -126,27 +132,33 @@ class _DashboardGateState extends State<DashboardGate> {
     if (_isLoading) {
       return const Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
         ),
       );
     }
 
     if (_errorMessage != null) {
       return Scaffold(
+        backgroundColor: const Color(0xFF0F172A),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
                 const SizedBox(height: 16),
                 Text(
-                  'Gagal memuat profil pengguna:',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                  'Terjadi Kesalahan',
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
                 ),
-                Text(_errorMessage!, textAlign: TextAlign.center),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
+                Text(
+                  _errorMessage!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.slate),
+                ),
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
@@ -155,11 +167,15 @@ class _DashboardGateState extends State<DashboardGate> {
                     });
                     _fetchUserProfile();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0284C7),
+                    foregroundColor: Colors.white,
+                  ),
                   child: const Text('Coba Lagi'),
                 ),
                 TextButton(
-                  onPressed: () => _supabase.auth.signOut(),
-                  child: const Text('Log Out'),
+                  onPressed: () => _supabaseService.signOut(),
+                  child: const Text('Log Out', style: TextStyle(color: Colors.redAccent)),
                 ),
               ],
             ),
@@ -168,7 +184,7 @@ class _DashboardGateState extends State<DashboardGate> {
       );
     }
 
-    // Arahkan dashboard berdasarkan role
+    // Arahkan dashboard berdasarkan role hasil query
     switch (_role) {
       case 'admin_rw':
         return AdminRWDashboard(nama: _nama ?? 'Admin RW');
@@ -178,176 +194,5 @@ class _DashboardGateState extends State<DashboardGate> {
       default:
         return WargaDashboard(nama: _nama ?? 'Warga');
     }
-  }
-}
-
-// =========================================================================
-// SCREEN PLACEHOLDERS (Login & Dashboards)
-// =========================================================================
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _supabase = Supabase.instance.client;
-  bool _isLoading = false;
-
-  Future<void> _login() async {
-    setState(() => _isLoading = true);
-    try {
-      await _supabase.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Gagal: ${e.toString()}'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(Icons.maps_home_work_rounded, size: 80, color: Color(0xFF0F172A)),
-              const SizedBox(height: 24),
-              Text(
-                'Sistem Terpadu RT/RW',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF0F172A),
-                ),
-              ),
-              Text(
-                'Silakan login untuk mengakses layanan warga',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 36),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F172A),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AdminRWDashboard extends StatelessWidget {
-  final String nama;
-  const AdminRWDashboard({super.key, required this.nama});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Admin RW'),
-        actions: [
-          IconButton(
-            onPressed: () => Supabase.instance.client.auth.signOut(),
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: Center(
-        child: Text('Selamat Datang, $nama!\nAnda memiliki hak akses Admin RW (Super Admin).'),
-      ),
-    );
-  }
-}
-
-class AdminRTDashboard extends StatelessWidget {
-  final String nama;
-  const AdminRTDashboard({super.key, required this.nama});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Admin RT'),
-        actions: [
-          IconButton(
-            onPressed: () => Supabase.instance.client.auth.signOut(),
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: Center(
-        child: Text('Selamat Datang, $nama!\nAnda memiliki hak akses Admin RT.'),
-      ),
-    );
-  }
-}
-
-class WargaDashboard extends StatelessWidget {
-  final String nama;
-  const WargaDashboard({super.key, required this.nama});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Warga'),
-        actions: [
-          IconButton(
-            onPressed: () => Supabase.instance.client.auth.signOut(),
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: Center(
-        child: Text('Selamat Datang, $nama!\nAnda login sebagai Warga.'),
-      ),
-    );
   }
 }

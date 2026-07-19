@@ -172,7 +172,67 @@ CREATE TABLE sampah_pickup_requests (
 );
 
 -- =========================================================================
--- 9. ROW LEVEL SECURITY (RLS) & HELPER FUNCTIONS
+-- 9. USER CREATION TRIGGER (Auto-create profiles and households)
+-- =========================================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+DECLARE
+    v_household_id UUID;
+    v_rt_id UUID;
+    v_nama VARCHAR;
+    v_nik VARCHAR;
+    v_hp VARCHAR;
+    v_status_hunian status_hunian_type;
+    v_agama agama_type;
+    v_role user_role;
+    v_is_head BOOLEAN;
+BEGIN
+    -- Extract fields from raw_user_meta_data
+    v_rt_id := (new.raw_user_meta_data->>'rt_id')::UUID;
+    v_nama := new.raw_user_meta_data->>'nama_lengkap';
+    v_nik := new.raw_user_meta_data->>'nik';
+    v_hp := new.raw_user_meta_data->>'no_hp';
+    v_status_hunian := (coalesce(new.raw_user_meta_data->>'status_hunian', 'Pemilik'))::status_hunian_type;
+    v_agama := (coalesce(new.raw_user_meta_data->>'agama', 'Lainnya'))::agama_type;
+    v_role := (coalesce(new.raw_user_meta_data->>'role', 'warga'))::user_role;
+    v_is_head := coalesce((new.raw_user_meta_data->>'is_head_of_household')::BOOLEAN, false);
+
+    -- If they are registering a new household (as head of household)
+    IF v_is_head = true THEN
+        INSERT INTO public.households (rt_id, alamat)
+        VALUES (v_rt_id, coalesce(new.raw_user_meta_data->>'alamat', ''))
+        RETURNING id INTO v_household_id;
+    ELSE
+        -- If joining an existing household, extract household_id
+        v_household_id := (new.raw_user_meta_data->>'household_id')::UUID;
+    END IF;
+
+    -- Insert profile
+    INSERT INTO public.profiles (id, household_id, rt_id, nama_lengkap, nik, no_hp, role, is_head_of_household, status_hunian, agama)
+    VALUES (
+        new.id,
+        v_household_id,
+        v_rt_id,
+        coalesce(v_nama, 'Warga Baru'),
+        v_nik,
+        v_hp,
+        v_role,
+        v_is_head,
+        v_status_hunian,
+        v_agama
+    );
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to execute the function on auth.users insert
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- =========================================================================
+-- 10. ROW LEVEL SECURITY (RLS) & HELPER FUNCTIONS
 -- =========================================================================
 
 -- Mendapatkan profile user yang sedang login saat ini secara cepat
