@@ -258,6 +258,67 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Scalar helpers to retrieve current user info from profiles table bypassing RLS recursion
+CREATE OR REPLACE FUNCTION get_current_user_role()
+RETURNS public.user_role
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+DECLARE
+    v_role public.user_role;
+BEGIN
+    SELECT role INTO v_role FROM public.profiles WHERE id = auth.uid();
+    RETURN v_role;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_current_user_rt_id()
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+DECLARE
+    v_rt_id UUID;
+BEGIN
+    SELECT rt_id INTO v_rt_id FROM public.profiles WHERE id = auth.uid();
+    RETURN v_rt_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_current_user_household_id()
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+DECLARE
+    v_household_id UUID;
+BEGIN
+    SELECT household_id INTO v_household_id FROM public.profiles WHERE id = auth.uid();
+    RETURN v_household_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_current_user_agama()
+RETURNS public.agama_type
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+DECLARE
+    v_agama public.agama_type;
+BEGIN
+    SELECT agama INTO v_agama FROM public.profiles WHERE id = auth.uid();
+    RETURN v_agama;
+END;
+$$;
+
 -- Aktifkan RLS pada seluruh tabel
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE households ENABLE ROW LEVEL SECURITY;
@@ -275,23 +336,23 @@ ALTER TABLE sampah_pickup_requests ENABLE ROW LEVEL SECURITY;
 -- =========================================================================
 CREATE POLICY "RW Admin can view and edit all profiles" 
 ON profiles TO authenticated
-USING ( (SELECT user_role FROM get_current_profile()) = 'admin_rw' )
-WITH CHECK ( (SELECT user_role FROM get_current_profile()) = 'admin_rw' );
+USING ( get_current_user_role() = 'admin_rw' )
+WITH CHECK ( get_current_user_role() = 'admin_rw' );
 
 CREATE POLICY "RT Admin can view and edit profiles in their RT" 
 ON profiles TO authenticated
 USING ( 
-    (SELECT user_role FROM get_current_profile()) = 'admin_rt' 
-    AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+    get_current_user_role() = 'admin_rt' 
+    AND rt_id = get_current_user_rt_id()
 )
 WITH CHECK (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rt' 
-    AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+    get_current_user_role() = 'admin_rt' 
+    AND rt_id = get_current_user_rt_id()
 );
 
 CREATE POLICY "Warga can view profiles in their own RT" 
 ON profiles FOR SELECT TO authenticated
-USING ( rt_id = (SELECT user_rt_id FROM get_current_profile()) );
+USING ( rt_id = get_current_user_rt_id() );
 
 CREATE POLICY "Warga can view their own profile" 
 ON profiles FOR SELECT TO authenticated
@@ -308,16 +369,16 @@ WITH CHECK ( id = auth.uid() );
 CREATE POLICY "RT & RW admins can manage households in their territory"
 ON households TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    get_current_user_role() = 'admin_rw'
     OR (
-        (SELECT user_role FROM get_current_profile()) = 'admin_rt'
-        AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+        get_current_user_role() = 'admin_rt'
+        AND rt_id = get_current_user_rt_id()
     )
 );
 
 CREATE POLICY "Warga can view their own household data"
 ON households FOR SELECT TO authenticated
-USING ( id = (SELECT user_household_id FROM get_current_profile()) );
+USING ( id = get_current_user_household_id() );
 
 -- =========================================================================
 -- POLICY UNTUK IURAN (Sangat Ketat: Warga hanya bisa melihat iuran keluarga)
@@ -325,16 +386,16 @@ USING ( id = (SELECT user_household_id FROM get_current_profile()) );
 CREATE POLICY "RW & RT admins can manage iuran"
 ON iuran TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    get_current_user_role() = 'admin_rw'
     OR (
-        (SELECT user_role FROM get_current_profile()) = 'admin_rt'
-        AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+        get_current_user_role() = 'admin_rt'
+        AND rt_id = get_current_user_rt_id()
     )
 );
 
 CREATE POLICY "Warga can view their household iuran"
 ON iuran FOR SELECT TO authenticated
-USING ( household_id = (SELECT user_household_id FROM get_current_profile()) );
+USING ( household_id = get_current_user_household_id() );
 
 -- =========================================================================
 -- POLICY UNTUK KAS RT
@@ -342,16 +403,16 @@ USING ( household_id = (SELECT user_household_id FROM get_current_profile()) );
 CREATE POLICY "RW & RT admins can manage kas_rt"
 ON kas_rt TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    get_current_user_role() = 'admin_rw'
     OR (
-        (SELECT user_role FROM get_current_profile()) = 'admin_rt'
-        AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+        get_current_user_role() = 'admin_rt'
+        AND rt_id = get_current_user_rt_id()
     )
 );
 
 CREATE POLICY "Warga can view their RT cash reports"
 ON kas_rt FOR SELECT TO authenticated
-USING ( rt_id = (SELECT user_rt_id FROM get_current_profile()) );
+USING ( rt_id = get_current_user_rt_id() );
 
 -- =========================================================================
 -- POLICY UNTUK PENGUMUMAN (Targeted Broadcast RLS)
@@ -359,17 +420,17 @@ USING ( rt_id = (SELECT user_rt_id FROM get_current_profile()) );
 CREATE POLICY "Admins can manage pengumuman"
 ON pengumuman TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) IN ('admin_rw', 'admin_rt')
+    get_current_user_role() IN ('admin_rw', 'admin_rt')
 );
 
 CREATE POLICY "Warga can view pengumuman according to RT and Religion"
 ON pengumuman FOR SELECT TO authenticated
 USING (
     -- Pengumuman tingkat RW (rt_id IS NULL) atau spesifik RT warga sendiri
-    (rt_id IS NULL OR rt_id = (SELECT user_rt_id FROM get_current_profile()))
+    (rt_id IS NULL OR rt_id = get_current_user_rt_id())
     AND
     -- Pengumuman umum (target_agama IS NULL) atau spesifik agama warga
-    (target_agama IS NULL OR target_agama = (SELECT user_agama FROM get_current_profile()))
+    (target_agama IS NULL OR target_agama = get_current_user_agama())
 );
 
 -- =========================================================================
@@ -378,29 +439,29 @@ USING (
 CREATE POLICY "Warga can view panic alerts in their RT"
 ON panic_alerts FOR SELECT TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rw'
-    OR rt_id = (SELECT user_rt_id FROM get_current_profile())
+    get_current_user_role() = 'admin_rw'
+    OR rt_id = get_current_user_rt_id()
 );
 
 CREATE POLICY "Warga can insert panic alerts for themselves"
 ON panic_alerts FOR INSERT TO authenticated
 WITH CHECK (
     profile_id = auth.uid()
-    AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+    AND rt_id = get_current_user_rt_id()
 );
 
 CREATE POLICY "Admins can update panic alerts"
 ON panic_alerts FOR UPDATE TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) IN ('admin_rt', 'admin_rw')
+    get_current_user_role() IN ('admin_rt', 'admin_rw')
 );
 
 CREATE POLICY "Warga can manage their guest reports"
 ON tamu_reports TO authenticated
 USING (
     reporter_id = auth.uid()
-    OR (SELECT user_role FROM get_current_profile()) = 'admin_rt' AND rt_id = (SELECT user_rt_id FROM get_current_profile())
-    OR (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    OR (get_current_user_role() = 'admin_rt' AND rt_id = get_current_user_rt_id())
+    OR get_current_user_role() = 'admin_rw'
 );
 
 -- =========================================================================
@@ -409,21 +470,21 @@ USING (
 CREATE POLICY "RW & RT admins can manage sampah schedule"
 ON sampah_schedule TO authenticated
 USING (
-    (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    get_current_user_role() = 'admin_rw'
     OR (
-        (SELECT user_role FROM get_current_profile()) = 'admin_rt'
-        AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+        get_current_user_role() = 'admin_rt'
+        AND rt_id = get_current_user_rt_id()
     )
 );
 
 CREATE POLICY "Warga can view their RT sampah schedule"
 ON sampah_schedule FOR SELECT TO authenticated
-USING ( rt_id = (SELECT user_rt_id FROM get_current_profile()) );
+USING ( rt_id = get_current_user_rt_id() );
 
 CREATE POLICY "Warga can manage their sampah pickup requests"
 ON sampah_pickup_requests TO authenticated
 USING (
     profile_id = auth.uid()
-    OR (SELECT user_role FROM get_current_profile()) = 'admin_rt' AND rt_id = (SELECT user_rt_id FROM get_current_profile())
-    OR (SELECT user_role FROM get_current_profile()) = 'admin_rw'
+    OR (get_current_user_role() = 'admin_rt' AND rt_id = get_current_user_rt_id())
+    OR get_current_user_role() = 'admin_rw'
 );
