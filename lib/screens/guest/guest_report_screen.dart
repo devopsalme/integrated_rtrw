@@ -138,7 +138,7 @@ class _GuestReportScreenState extends State<GuestReportScreen> {
           bottom: TabBar(
             indicatorColor: const Color(0xFF38BDF8),
             labelColor: const Color(0xFF38BDF8),
-            unselectedLabelColor: Colors.slate[400],
+            unselectedLabelColor: const Color(0xFF94A3B8),
             tabs: [
               Tab(child: Text('Formulir Lapor', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
               Tab(child: Text('Riwayat Laporan', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
@@ -341,7 +341,7 @@ class _GuestReportScreenState extends State<GuestReportScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

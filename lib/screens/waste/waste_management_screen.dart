@@ -257,7 +257,7 @@ class _WasteManagementScreenState extends State<WasteManagementScreen> {
           bottom: TabBar(
             indicatorColor: const Color(0xFF38BDF8),
             labelColor: const Color(0xFF38BDF8),
-            unselectedLabelColor: Colors.slate[400],
+            unselectedLabelColor: const Color(0xFF94A3B8),
             tabs: [
               Tab(child: Text('Jadwal Rutin', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
               Tab(child: Text(isWarga ? 'Jemput Khusus' : 'Pengajuan Warga', style: GoogleFonts.outfit(fontWeight: FontWeight.bold))),
@@ -412,7 +412,7 @@ class _WasteManagementScreenState extends State<WasteManagementScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.between,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
