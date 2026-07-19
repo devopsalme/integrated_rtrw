@@ -375,11 +375,24 @@ USING (
 -- =========================================================================
 -- POLICY UNTUK KEAMANAN (Panic Alerts & Tamu)
 -- =========================================================================
-CREATE POLICY "Users can create and view panic alerts in their RT"
-ON panic_alerts TO authenticated
+CREATE POLICY "Warga can view panic alerts in their RT"
+ON panic_alerts FOR SELECT TO authenticated
 USING (
     (SELECT user_role FROM get_current_profile()) = 'admin_rw'
     OR rt_id = (SELECT user_rt_id FROM get_current_profile())
+);
+
+CREATE POLICY "Warga can insert panic alerts for themselves"
+ON panic_alerts FOR INSERT TO authenticated
+WITH CHECK (
+    profile_id = auth.uid()
+    AND rt_id = (SELECT user_rt_id FROM get_current_profile())
+);
+
+CREATE POLICY "Admins can update panic alerts"
+ON panic_alerts FOR UPDATE TO authenticated
+USING (
+    (SELECT user_role FROM get_current_profile()) IN ('admin_rt', 'admin_rw')
 );
 
 CREATE POLICY "Warga can manage their guest reports"
