@@ -243,11 +243,13 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
 CREATE OR REPLACE FUNCTION get_current_profile()
 RETURNS TABLE (
     user_id UUID,
-    user_role user_role,
+    user_role public.user_role,
     user_rt_id UUID,
     user_household_id UUID,
-    user_agama agama_type
-) SECURITY DEFINER AS $$
+    user_agama public.agama_type
+) SECURITY DEFINER 
+SET search_path = public
+AS $$
 BEGIN
     RETURN QUERY
     SELECT p.id, p.role, p.rt_id, p.household_id, p.agama
