@@ -28,17 +28,17 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
       final client = _supabaseService.client;
       
       // Mengambil total RT
-      final rtRes = await client.from('rt').select('id', const FetchOptions(count: CountOption.exact));
+      final rtRes = await client.from('rt').select('id');
       // Mengambil total KK
-      final kkRes = await client.from('households').select('id', const FetchOptions(count: CountOption.exact));
+      final kkRes = await client.from('households').select('id');
       // Mengambil total Warga
-      final wargaRes = await client.from('profiles').select('id', const FetchOptions(count: CountOption.exact));
+      final wargaRes = await client.from('profiles').select('id');
 
       if (mounted) {
         setState(() {
-          _totalRT = rtRes.count ?? 0;
-          _totalKK = kkRes.count ?? 0;
-          _totalWarga = wargaRes.count ?? 0;
+          _totalRT = rtRes.length;
+          _totalKK = kkRes.length;
+          _totalWarga = wargaRes.length;
           _isLoading = false;
         });
       }
@@ -124,7 +124,7 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
                                   'Selamat datang kembali di panel kendali wilayah RW.',
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
-                                    color: Colors.slate[300],
+                                    color: Colors.blueGrey[300],
                                   ),
                                 ),
                               ],
@@ -242,7 +242,7 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
                 title,
                 style: GoogleFonts.outfit(
                   fontSize: 12,
-                  color: Colors.slate[400],
+                  color: Colors.blueGrey[400],
                 ),
               ),
             ],
@@ -287,12 +287,12 @@ class _AdminRWDashboardState extends State<AdminRWDashboard> {
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                 ),
               ],
             ),
           ),
-          Icon(Icons.chevron_right_rounded, color: Colors.slate[500]),
+          Icon(Icons.chevron_right_rounded, color: Colors.blueGrey[500]),
         ],
       ),
     );

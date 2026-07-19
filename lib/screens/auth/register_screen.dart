@@ -19,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nikController = TextEditingController();
   final _hpController = TextEditingController();
   final _alamatController = TextEditingController();
+  final _householdIdController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -28,15 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _selectedAgama = 'Islam';
   bool _isHeadOfHousehold = true; // Toggle for Head vs Family Member
 
-  // Controllers
-  final _namaController = TextEditingController();
-  final _nikController = TextEditingController();
-  final _hpController = TextEditingController();
-  final _alamatController = TextEditingController();
-  final _householdIdController = TextEditingController(); // For joining household
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
+  
   // State flags
   bool _isLoadingRTs = true;
   bool _isSubmitting = false;
@@ -125,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               'Registrasi Berhasil! Silakan masuk ke aplikasi.',
               style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
             ),
-            backgroundColor: Colors.emerald,
+            backgroundColor: Colors.teal,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -208,7 +201,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 selected: _isHeadOfHousehold,
                                 selectedColor: const Color(0xFF0284C7),
                                 backgroundColor: Colors.white.withOpacity(0.05),
-                                labelStyle: TextStyle(color: _isHeadOfHousehold ? Colors.white : Colors.slate[400]),
+                                labelStyle: TextStyle(color: _isHeadOfHousehold ? Colors.white : Colors.blueGrey[400]),
                                 onSelected: (val) => setState(() => _isHeadOfHousehold = true),
                               ),
                             ),
@@ -219,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 selected: !_isHeadOfHousehold,
                                 selectedColor: const Color(0xFF0284C7),
                                 backgroundColor: Colors.white.withOpacity(0.05),
-                                labelStyle: TextStyle(color: !_isHeadOfHousehold ? Colors.white : Colors.slate[400]),
+                                labelStyle: TextStyle(color: !_isHeadOfHousehold ? Colors.white : Colors.blueGrey[400]),
                                 onSelected: (val) => setState(() => _isHeadOfHousehold = false),
                               ),
                             ),
@@ -240,7 +233,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           _isHeadOfHousehold 
                               ? 'Informasi ini digunakan untuk inisialisasi satu KK (Household ID).'
                               : 'Akun Anda akan dimasukkan ke dalam KK kepala keluarga Anda.',
-                          style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[400]),
+                          style: GoogleFonts.outfit(fontSize: 13, color: Colors.blueGrey[400]),
                         ),
                         const SizedBox(height: 24),
 
@@ -391,7 +384,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         label,
-        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.slate[300]),
+        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.blueGrey[300]),
       ),
     );
   }
@@ -411,7 +404,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: Colors.slate[500]),
+        hintStyle: TextStyle(color: Colors.blueGrey[500]),
         prefixIcon: Icon(icon, color: const Color(0xFF38BDF8)),
         filled: true,
         fillColor: Colors.white.withOpacity(0.05),
@@ -439,12 +432,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: '••••••••',
-        hintStyle: TextStyle(color: Colors.slate[500]),
+        hintStyle: TextStyle(color: Colors.blueGrey[500]),
         prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF38BDF8)),
         suffixIcon: IconButton(
           icon: Icon(
             _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-            color: Colors.slate[400],
+            color: Colors.blueGrey[400],
           ),
           onPressed: () {
             setState(() => _obscurePassword = !_obscurePassword);

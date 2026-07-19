@@ -115,7 +115,7 @@ class SupabaseService {
         .from('profiles')
         .select('*')
         .eq('household_id', householdId)
-        .order('is_head_of_household', descending: true);
+        .order('is_head_of_household', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 

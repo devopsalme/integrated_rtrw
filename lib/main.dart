@@ -156,7 +156,7 @@ class _DashboardGateState extends State<DashboardGate> {
                 Text(
                   _errorMessage!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.slate),
+                  style: const TextStyle(color: Colors.blueGrey),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(

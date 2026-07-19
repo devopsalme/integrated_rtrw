@@ -109,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 15,
-                      color: Colors.slate[400],
+                      color: Colors.blueGrey[400],
                     ),
                   ),
                   const SizedBox(height: 48),
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Colors.slate[300],
+                      color: Colors.blueGrey[300],
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: 'nama@domain.com',
-                      hintStyle: TextStyle(color: Colors.slate[500]),
+                      hintStyle: TextStyle(color: Colors.blueGrey[500]),
                       prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF38BDF8)),
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.05),
@@ -162,14 +162,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Password Field
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Password',
                         style: GoogleFonts.outfit(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.slate[300],
+                          color: Colors.blueGrey[300],
                         ),
                       ),
                       TextButton(
@@ -199,12 +199,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: '••••••••',
-                      hintStyle: TextStyle(color: Colors.slate[500]),
+                      hintStyle: TextStyle(color: Colors.blueGrey[500]),
                       prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF38BDF8)),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: Colors.slate[400],
+                          color: Colors.blueGrey[400],
                         ),
                         onPressed: () {
                           setState(() => _obscurePassword = !_obscurePassword);
@@ -266,15 +266,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Divider
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.slate[700], thickness: 1)),
+                      Expanded(child: Divider(color: Colors.blueGrey[700], thickness: 1)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
                           'Warga Baru?',
-                          style: GoogleFonts.outfit(color: Colors.slate[500], fontSize: 13),
+                          style: GoogleFonts.outfit(color: Colors.blueGrey[500], fontSize: 13),
                         ),
                       ),
-                      Expanded(child: Divider(color: Colors.slate[700], thickness: 1)),
+                      Expanded(child: Divider(color: Colors.blueGrey[700], thickness: 1)),
                     ],
                   ),
                   const SizedBox(height: 24),

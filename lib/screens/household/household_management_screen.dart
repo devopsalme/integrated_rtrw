@@ -63,7 +63,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Kode Keluarga berhasil disalin!', style: GoogleFonts.outfit()),
-        backgroundColor: Colors.emerald,
+        backgroundColor: Colors.teal,
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
       ),
@@ -99,7 +99,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
 
                   // Header List
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Anggota Keluarga Terdaftar',
@@ -111,7 +111,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
                       ),
                       Text(
                         '${_members.length} Orang',
-                        style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[400]),
+                        style: GoogleFonts.outfit(fontSize: 13, color: Colors.blueGrey[400]),
                       ),
                     ],
                   ),
@@ -122,7 +122,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
                       ? const Center(
                           child: Padding(
                             padding: EdgeInsets.symmetric(vertical: 32.0),
-                            child: Text('Belum ada anggota keluarga.', style: TextStyle(color: Colors.slate)),
+                            child: Text('Belum ada anggota keluarga.', style: TextStyle(color: Colors.blueGrey)),
                           ),
                         )
                       : ListView.builder(
@@ -153,7 +153,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
                                         : Colors.white.withOpacity(0.05),
                                     child: Icon(
                                       isHead ? Icons.star_rounded : Icons.person_outline_rounded,
-                                      color: isHead ? const Color(0xFF38BDF8) : Colors.slate[400],
+                                      color: isHead ? const Color(0xFF38BDF8) : Colors.blueGrey[400],
                                       size: 24,
                                     ),
                                   ),
@@ -195,11 +195,11 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           'NIK: $nik',
-                                          style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                                          style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                                         ),
                                         Text(
                                           'No. HP: $hp',
-                                          style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                                          style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                                         ),
                                       ],
                                     ),
@@ -250,7 +250,7 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
           const SizedBox(height: 12),
           Text(
             'Gunakan kode unik di bawah ini untuk menghubungkan akun keluarga baru ke dalam satu KK terpadu.',
-            style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[300]),
+            style: GoogleFonts.outfit(fontSize: 13, color: Colors.blueGrey[300]),
           ),
           const SizedBox(height: 16),
           Row(
@@ -297,12 +297,12 @@ class _HouseholdManagementScreenState extends State<HouseholdManagementScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, color: Colors.slate, size: 18),
+                const Icon(Icons.info_outline, color: Colors.blueGrey, size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Cara tambah keluarga: Salin kode di atas, lalu minta anggota keluarga Anda mengunduh aplikasi dan melakukan registrasi dengan memasukkan Kode Keluarga ini pada form pendaftaran.',
-                    style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400], height: 1.4),
+                    style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400], height: 1.4),
                   ),
                 ),
               ],

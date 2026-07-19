@@ -84,7 +84,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Batal', style: GoogleFonts.outfit(color: Colors.slate[400])),
+            child: Text('Batal', style: GoogleFonts.outfit(color: Colors.blueGrey[400])),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -139,7 +139,8 @@ class _WargaDashboardState extends State<WargaDashboard> {
   @override
   Widget build(BuildContext context) {
     final rtInfo = _profile?['rt'] as Map?;
-    final rwNum = rtInfo != null ? (rtInfo['rw'] as Map?)?['nomor_rw'] ?? '' : '';
+    final rwInfo = rtInfo != null ? rtInfo['rw'] as Map? : null;
+    final rwNum = rwInfo != null ? rwInfo['nomor_rw'] ?? '' : '';
     final rtNum = rtInfo != null ? rtInfo['nomor_rt'] ?? '' : '';
 
     return Scaffold(
@@ -206,7 +207,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
 
                     // Targeted Broadcast / Announcements
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.between,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Pengumuman RT & RW',
@@ -255,11 +256,11 @@ class _WargaDashboardState extends State<WargaDashboard> {
                 const SizedBox(height: 4),
                 Text(
                   'RT $rtNum / RW $rwNum • Status: ${_profile?['status_hunian'] ?? ''}',
-                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                 ),
                 Text(
                   'Agama: ${_profile?['agama'] ?? ''}',
-                  style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                  style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400]),
                 ),
               ],
             ),
@@ -290,7 +291,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
                 const SizedBox(height: 4),
                 Text(
                   'Tekan jika membutuhkan bantuan darurat dari satpam & warga terdekat.',
-                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                  style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                 ),
               ],
             ),
@@ -382,7 +383,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
         _buildActionCard(
           icon: Icons.help_outline_rounded,
           label: 'Bantuan',
-          color: Colors.slate,
+          color: Colors.blueGrey,
           onTap: () {},
         ),
       ],
@@ -439,11 +440,11 @@ class _WargaDashboardState extends State<WargaDashboard> {
         ),
         child: Row(
           children: [
-            const Icon(Icons.shield_moon_outlined, color: Colors.slate, size: 28),
+            const Icon(Icons.shield_moon_outlined, color: Colors.blueGrey, size: 28),
             const SizedBox(width: 12),
             Text(
               'Tidak ada satpam terdaftar yang piket saat ini.',
-              style: GoogleFonts.outfit(color: Colors.slate, fontSize: 13),
+              style: GoogleFonts.outfit(color: Colors.blueGrey, fontSize: 13),
             ),
           ],
         ),
@@ -477,7 +478,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
                     ),
                     Text(
                       'Piket Shift: ${satpam['shift_mulai'] ?? ''} - ${satpam['shift_selesai'] ?? ''}',
-                      style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                      style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400]),
                     ),
                   ],
                 ),
@@ -503,7 +504,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
         child: Center(
           child: Text(
             'Tidak ada pengumuman untuk Anda.',
-            style: GoogleFonts.outfit(color: Colors.slate, fontSize: 13),
+            style: GoogleFonts.outfit(color: Colors.blueGrey, fontSize: 13),
           ),
         ),
       );
@@ -526,7 +527,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -541,7 +542,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
                   ),
                   Text(
                     'Oleh: $senderName',
-                    style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+                    style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400]),
                   ),
                 ],
               ),
@@ -553,7 +554,7 @@ class _WargaDashboardState extends State<WargaDashboard> {
               const SizedBox(height: 4),
               Text(
                 ann['isi'] ?? '',
-                style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[300]),
+                style: GoogleFonts.outfit(fontSize: 13, color: Colors.blueGrey[300]),
               ),
             ],
           ),

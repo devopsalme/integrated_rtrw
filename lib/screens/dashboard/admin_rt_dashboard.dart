@@ -47,18 +47,18 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
       // 2. Hitung statistik
       final kkCount = await client
           .from('households')
-          .select('id', const FetchOptions(count: CountOption.exact))
+          .select('id')
           .eq('rt_id', rtId);
 
       final tamuCount = await client
           .from('tamu_reports')
-          .select('id', const FetchOptions(count: CountOption.exact))
+          .select('id')
           .eq('rt_id', rtId)
           .eq('status', 'pending');
 
       final panicCount = await client
           .from('panic_alerts')
-          .select('id', const FetchOptions(count: CountOption.exact))
+          .select('id')
           .eq('rt_id', rtId)
           .eq('status', 'active');
 
@@ -67,9 +67,9 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
           _nomorRT = nr;
           _wargaList = List<Map<String, dynamic>>.from(wargaRes);
           _totalWarga = wargaRes.length;
-          _totalKK = kkCount.count ?? 0;
-          _pendingTamu = tamuCount.count ?? 0;
-          _activePanic = panicCount.count ?? 0;
+          _totalKK = kkCount.length;
+          _pendingTamu = tamuCount.length;
+          _activePanic = panicCount.length;
           _isLoading = false;
         });
       }
@@ -161,7 +161,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                                   'Siap melayani warga RT $_nomorRT hari ini.',
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
-                                    color: Colors.slate[300],
+                                    color: Colors.blueGrey[300],
                                   ),
                                 ),
                               ],
@@ -202,7 +202,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                           child: _buildStatCard(
                             title: 'Laporan Tamu',
                             value: _pendingTamu.toString(),
-                            color: _pendingTamu > 0 ? Colors.orangeAccent : Colors.slate,
+                            color: _pendingTamu > 0 ? Colors.orangeAccent : Colors.blueGrey,
                             icon: Icons.assignment_ind_outlined,
                           ),
                         ),
@@ -212,7 +212,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
 
                     // List Warga
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.between,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Daftar Warga RT $_nomorRT',
@@ -220,7 +220,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                         ),
                         Text(
                           '${_wargaList.length} orang',
-                          style: GoogleFonts.outfit(fontSize: 13, color: Colors.slate[400]),
+                          style: GoogleFonts.outfit(fontSize: 13, color: Colors.blueGrey[400]),
                         ),
                       ],
                     ),
@@ -230,7 +230,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                         ? const Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 32.0),
-                              child: Text('Belum ada warga terdaftar.', style: TextStyle(color: Colors.slate)),
+                              child: Text('Belum ada warga terdaftar.', style: TextStyle(color: Colors.blueGrey)),
                             ),
                           )
                         : ListView.builder(
@@ -260,7 +260,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                                           : Colors.white.withOpacity(0.05),
                                       child: Icon(
                                         isHead ? Icons.star_rounded : Icons.person_outline,
-                                        color: isHead ? const Color(0xFF0284C7) : Colors.slate[400],
+                                        color: isHead ? const Color(0xFF0284C7) : Colors.blueGrey[400],
                                       ),
                                     ),
                                     const SizedBox(width: 16),
@@ -279,14 +279,14 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
                                           const SizedBox(height: 2),
                                           Text(
                                             'HP: $hp • Hunian: $status',
-                                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.slate[400]),
+                                            style: GoogleFonts.outfit(fontSize: 12, color: Colors.blueGrey[400]),
                                           ),
                                         ],
                                       ),
                                     ),
                                     if (isHead)
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, College: EdgeInsets.all(2)),
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
                                           color: const Color(0xFF0284C7).withOpacity(0.15),
                                           borderRadius: BorderRadius.circular(6),
@@ -377,7 +377,7 @@ class _AdminRTDashboardState extends State<AdminRTDashboard> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(fontSize: 11, color: Colors.slate[400]),
+            style: GoogleFonts.outfit(fontSize: 11, color: Colors.blueGrey[400]),
           ),
         ],
       ),
