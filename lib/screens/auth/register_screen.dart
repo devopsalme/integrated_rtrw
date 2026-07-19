@@ -58,6 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _loadRTList() async {
     try {
       final list = await _supabaseService.getRTList();
+      print('DEBUG RT LIST: $list');
       setState(() {
         _rtList = list;
         if (list.isNotEmpty) {
@@ -66,6 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoadingRTs = false;
       });
     } catch (e) {
+      print('DEBUG RT LIST ERROR: $e');
       setState(() {
         _rtFetchError = 'Gagal memuat daftar RT: $e';
         _isLoadingRTs = false;
